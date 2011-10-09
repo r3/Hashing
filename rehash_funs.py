@@ -1,21 +1,16 @@
-@classmethod
-def NextSlot(init):
+def NextSlot(self, init):
     return init + 1
 
-@classmethod
-def Add7(init):
+def Add7(self, init):
     return init + 7
 
-@classmethod
-def Add35(init):
+def Add35(self, init):
     return init + 35
 
-@classmethod
-def Add11(init):
+def Add11(self, init):
     return init + 11
 
-@classmethod
-def Mult2(init):
+def Mult2(self, init):
     return init * 2
 
 methods = (NextSlot, Add7, Add35, Add11, Mult2)

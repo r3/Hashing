@@ -1,25 +1,19 @@
-@classmethod
-def FirstLetter(name):
-    return ord(name[0])
+def FirstLetter(record):
+    return ord(record.fname[0])
 
-@classmethod
-def CountLetters(name):
-    return len(name)
+def CountLetters(record):
+    return len(record.fname)
 
-@classmethod
-def SumName(name):
-    return sum(map(ord, list(name)))
+def SumName(record):
+    return sum(map(ord, list(record.fname)))
 
-@classmethod
-def SumNames(fname, lname):
-    return sum(map(ord, list(fname + lname)))
+def SumNames(record):
+    return sum(map(ord, list(record.fname + record.lname)))
 
-@classmethod
-def SID(sid):
-    return sid
+def SID(record):
+    return record.sid
 
-@classmethod
-def Phone(phone):
-    return sum([str(x) for x in list(phone) if x.isnumeric()])
+def Phone(record):
+    return sum([str(x) for x in list(record.phone) if x.isnumeric()])
 
 methods = (FirstLetter, CountLetters, SumName, SumNames, SID, Phone)
