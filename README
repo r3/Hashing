@@ -1,0 +1,18 @@
+Author: Ryan Roler (ryan.roler@gmail.com)
+
+This is a sandbox for testing hashing algorithms and open-addressing options based on collision statistics and
+performance of algorithms. The hashing project was started as homework for my data structures class, and is built
+the the specifications found at the following wiki page:
+
+http://cse222.wikispaces.com/Good%20Recipe%20for%20Hash
+
+The project, as it stands, is incomplete and in active development.
+
+Using a framework prototype dictionary in the hashish script, I iterate over hash/addressing methods available in
+separate modules (buildhash_funs and rehash_funs) to employ a test function which inject these methods and runs a
+standardized test. Results can be redirected from the standard output through parameters passed to the function.
+
+Additional Notes:
+http://svn.python.org/view/python/trunk/Objects/dictobject.c?view=markup  # Python Hash implementation
+http://partow.net/programming/hashfunctions/index.html  # Hash algorithms
+http://www.cs.sfu.ca/CC/354/zaiane/material/notes/Chapter11/node20.html  # Dynamic Hashing
