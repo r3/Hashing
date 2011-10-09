@@ -11,7 +11,7 @@ class Record():
         return '{fname} {lname}\t{sid}\t{phone}'.format(**self.__dict__)
 
 class RDict():
-    def __init__(self, size=30):
+    def __init__(self, size=11):
         self._values = [None] * size
         self._size = size
         self._used = 0
@@ -62,18 +62,20 @@ class RDict():
         sig = self._buildhash(item)
         while self._values[self._at(sig)] != None:
             self._count += 1
-            sig = self.rehash(sig)
+            sig = self._rehash(sig)
         self._values[self._at(sig)] = item
         self._used += 1
 
 def parse_records(txt, table):
     with open(txt) as records:
         for record in records:
-            if not record.startswith('//'):
+            if not record.isspace() and not record.startswith('//'):
                 (fname, lname, sid, phone, height, bday, prog_pts, exam_pts,
                  part_pts) = record.split()
-                table.insert(Record(fname, lname, sid, phone, height, bday, 
-                                      prog_pts, exam_pts, part_pts))
+                table.insert(Record(fname=fname, lname=lname, sid=sid,
+                                    phone=phone, height=height, bday=bday, 
+                                    prog_pts=prog_pts, exam_pts=exam_pts,
+                                    part_pts=part_pts))
 
 def manual_insert(table, index, **kwargs):
     table[index] = Record(**kwargs)
@@ -84,8 +86,7 @@ def dump_table(table):
             print('{}: {}'.format(num, item))
 
 def dump_stats(table):
-    # Gather use/performance statistics from table and return them. Placeholder
-    return '{}'.format(table.stats)
+    return '{}'.format(table._count)
 
 def test_methods(txt, output=None):
     def build_instance():
@@ -101,12 +102,11 @@ def test_methods(txt, output=None):
 
     for algos, test in build_instance():
         parse_records(txt, test)
-        print("Using initial hashing algorithm: {} and rehashing \
-              algorithm: {}".format(*algos))
+        print(("Using initial hashing algorithm: {} and rehashing" +
+              " algorithm: {}").format(*algos))
         print(dump_stats(test))
 
 if __name__ == '__main__':
-    print(sys.argv)
     if len(sys.argv) < 1:
         table = RDict()
         dump_table(table)
