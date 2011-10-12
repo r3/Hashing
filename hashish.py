@@ -11,15 +11,15 @@ class Record():
         return '{fname} {lname}\t{sid}\t{phone}'.format(**self.__dict__)
 
 class RDict():
-    def __init__(self, size=1000):
+    def __init__(self, size=42):
         self._values = [None] * size
         self._size = size
         self._used = 0
         self._rehash = rehash_funs.Add11
         self._buildhash = buildhash_funs.SID
-        self._count = 0
+        self._cost = 0
 
-    def __getitem__(self, index):  # change index to item
+    def __getitem__(self, index):
         return self._values[index]
         
     def __setitem__(self, index, item):
@@ -37,10 +37,15 @@ class RDict():
         return self._used / self._size
 
     def _grow(self):
+        contains = [x for x in self._values if x != None]
+        cost = 0
+
         self._size *= 2
-        for x in range(self._size - len(self._values)):
-            self._values.append(None)
-        # REHASH!
+        self._values = [None] * self._size
+
+        for item in contains:
+            cost = self.insert(item)
+        #print("Growing, cost of {} incurred.".format(cost))
 
     def _at(self, hsh):
         return hsh % self._size
@@ -48,33 +53,26 @@ class RDict():
     def table_size(self):
         return '{} bytes'.format(self.__sizeof__())
 
-    def get(self, key):
-        # If I had the object, I wouldn't need to look it up!
-        # Change to allow lookup of information like SID rather than
-        # requiring the object its self.
-        sig = self._buildhash(key)
-        newsig = sig
-        while self._buildhash(self._values[self._at(newsig)]) != sig:
-            count += 1
-            newsig = self._rehash(sig)
-        return self._values[self._at(newsig)]
-
     def insert(self, item):
-        #if self._saturation > 0.75:
-        #    self._grow()
-        if self._size == self._used:
-            print("Table is full, damnit!")
-            return None
-        sig = self._buildhash(item)
-        while self._values[self._at(sig)] != None:
-            self._count += 1
-            sig = self._rehash(sig)
-            #print("Hash is now {}".format(sig))
-            #print("Collision in inserting {} in slot {},".format(item.fname +
-            #      item.lname, self._at(sig)), end='')
-            #print(" table is {:.2}% full.".format(self._saturation))
+        cost = 0  # Per insertion cost
+        if self._saturation > 0.75:
+            self._grow()
+        hsh = self._buildhash(item)
+        sig = self._at(hsh)
+        tries = [sig]
+        while self._values[sig] != None:
+            self._cost += 1
+            cost += 1
+            sig = self._at(self._rehash(sig))
+            if sig in tries:
+                self._cost += 100  # Record could not be inserted.
+                cost += 100
+                break
+            else:
+                tries.append(sig)
         self._values[self._at(sig)] = item
         self._used += 1
+        return cost
 
 def parse_records(txt, table):
     with open(txt) as records:
@@ -86,6 +84,7 @@ def parse_records(txt, table):
                                     phone=phone, height=height, bday=bday, 
                                     prog_pts=prog_pts, exam_pts=exam_pts,
                                     part_pts=part_pts))
+        print("The cost of building table was {}.\n".format(table._cost))
 
 def manual_insert(table, index, **kwargs):
     table[index] = Record(**kwargs)
@@ -94,9 +93,6 @@ def dump_table(table):
     for num, item in enumerate(table):
         if item != None:
             print('{}: {}'.format(num, item))
-
-def dump_stats(table):
-    return '{}'.format(table._count)
 
 def test_methods(txt, output=None):
     def build_instance():
@@ -111,10 +107,9 @@ def test_methods(txt, output=None):
         sys.stdout = output
 
     for algos, test in build_instance():
-        parse_records(txt, test)
         print(("Using initial hashing algorithm: {} and rehashing" +
               " algorithm: {}").format(*algos))
-        print(dump_stats(test))
+        parse_records(txt, test)
 
 if __name__ == '__main__':
     if len(sys.argv) < 1:

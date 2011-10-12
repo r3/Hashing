@@ -1,3 +1,10 @@
+def fix_inpt(func):
+    def decorator(*args, **kwargs):
+        if type(args[0]) != str:
+            pass
+        return fucn(*args, **kwargs)
+    return decorator
+
 def FirstLetter(record):
     return ord(record.fname[0])
 
