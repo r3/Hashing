@@ -11,7 +11,7 @@ class Record():
         return '{fname} {lname}\t{sid}\t{phone}'.format(**self.__dict__)
 
 class RDict():
-    def __init__(self, size=11):
+    def __init__(self, size=1000):
         self._values = [None] * size
         self._size = size
         self._used = 0
@@ -43,12 +43,16 @@ class RDict():
         # REHASH!
 
     def _at(self, hsh):
-        return hsh % self._size
+        if type(hsh) is str: print(hsh)
+        return divmod(hsh, self._size)[-1]
 
     def table_size(self):
         return '{} bytes'.format(self.__sizeof__())
 
     def get(self, key):
+        # If I had the object, I wouldn't need to look it up!
+        # Change to allow lookup of information like SID rather than
+        # requiring the object its self.
         sig = self._buildhash(key)
         newsig = sig
         while self._buildhash(self._values[self._at(newsig)]) != sig:
@@ -57,12 +61,19 @@ class RDict():
         return self._values[self._at(newsig)]
 
     def insert(self, item):
-        if self._saturation > 0.75:
-            self._grow()
+        #if self._saturation > 0.75:
+        #    self._grow()
+        if self._size == self._used:
+            print("Table is full, damnit!")
+            return None
         sig = self._buildhash(item)
         while self._values[self._at(sig)] != None:
             self._count += 1
             sig = self._rehash(sig)
+            #print("Hash is now {}".format(sig))
+            #print("Collision in inserting {} in slot {},".format(item.fname +
+            #      item.lname, self._at(sig)), end='')
+            #print(" table is {:.2}% full.".format(self._saturation))
         self._values[self._at(sig)] = item
         self._used += 1
 

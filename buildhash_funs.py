@@ -11,9 +11,9 @@ def SumNames(record):
     return sum(map(ord, list(record.fname + record.lname)))
 
 def SID(record):
-    return record.sid
+    return int(record.sid)
 
 def Phone(record):
-    return sum([str(x) for x in list(record.phone) if x.isnumeric()])
+    return sum([int(x) for x in list(record.phone) if x.isnumeric()])
 
 methods = (FirstLetter, CountLetters, SumName, SumNames, SID, Phone)
