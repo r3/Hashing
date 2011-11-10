@@ -43,8 +43,7 @@ class RDict():
         # REHASH!
 
     def _at(self, hsh):
-        if type(hsh) is str: print(hsh)
-        return divmod(hsh, self._size)[-1]
+        return hsh % self._size
 
     def table_size(self):
         return '{} bytes'.format(self.__sizeof__())
